@@ -9,13 +9,13 @@ const transporter = nodemailer_1.default.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: 'fyzan.shaik@gmail.com',
-        pass: 'gcxx jukp rehq twwu',
+        user: 'devclub.dc@gmail.com',
+        pass: 'mbjv spjv kzhp ifnx',
     },
 });
 const sendMail = async (recieverEmail) => {
     const uniqueHash = Math.random().toString(36).substring(2, 15);
-    const rickRollLink = 'https://tinyurl.com/sa3ee9a3'; // Rickroll link
+    const rickRollLink = 'https://tinyurl.com/sa3ee9a3';
     const emailSuccess = await transporter.sendMail({
         to: `${recieverEmail}`,
         subject: 'Join Our Git, GitHub & Open Source Session!',

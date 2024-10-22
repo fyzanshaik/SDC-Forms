@@ -1,0 +1,71 @@
+/* styles.css */
+
+body {
+	font-family: 'Roboto Mono', monospace;
+	margin: 0;
+	padding: 0;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Mode */
+body.dark {
+	background-color: #1c1c1c; /* stone-950 */
+	color: var(--text-color); /* Use CSS variable for text color */
+}
+
+body.dark .form {
+	background-color: var(--bg-color); /* Use CSS variable */
+}
+
+body.dark .input,
+body.dark .select-trigger,
+body.dark .select-content {
+	background-color: var(--bg-color); /* Use CSS variable */
+	border-color: #444; /* Adjusted border for better visibility */
+}
+
+/* Light Mode */
+body.light {
+	background-color: whitesmoke;
+	color: var(--text-color); /* Use CSS variable for text color */
+}
+
+body.light .form {
+	background-color: var(--bg-color); /* Use CSS variable */
+}
+
+body.light .input,
+body.light .select-trigger,
+body.light .select-content {
+	background-color: var(--bg-color); /* Use CSS variable */
+	border-color: #ccc;
+}
+
+/* Adjusting input and select styles */
+.input,
+.select-trigger {
+	color: var(--text-color); /* Text color */
+}
+
+/* Form */
+.form {
+	width: 100%; /* Make the form wider */
+	max-width: 400px; /* Adjust as necessary */
+	padding: 2rem;
+	margin: auto;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s; /* Add transition for background color */
+}
+
+/* Adjusting Sizes */
+.label,
+.input,
+.select-trigger {
+	font-size: 0.875rem; /* Smaller size for labels and inputs */
+}
+
+.button {
+	padding: 0.5rem; /* Smaller padding for buttons */
+	font-size: 0.875rem; /* Smaller size for buttons */
+}
