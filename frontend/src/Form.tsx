@@ -18,7 +18,7 @@ const studentSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
 	lastName: z.string().min(1, 'Last name is required'),
 	year: z.enum(['ONE', 'TWO', 'THREE', 'FOUR']),
-	branch: z.enum(['CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME']),
+	branch: z.enum(['CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME', 'IT', 'CIVIL']),
 	section: z.string().length(1, 'Section must be a single character'),
 	phoneNumber: z.string().length(10, 'Phone number must be exactly 10 digits').regex(/^\d+$/, 'Phone number must contain only digits'),
 	email: z.string().email('Invalid email address'),
@@ -45,20 +45,30 @@ const Form: React.FC = () => {
 		console.log(data);
 		const payload = { studentData: data };
 		let interval;
+
 		try {
 			interval = setInterval(() => {
 				setProgress((prev) => (prev !== null && prev < 100 ? prev + 20 : 100));
 			}, 500);
 
-			await axios.post(`${apiUrl}/submit-form`, payload);
+			const response = await axios.post(`${apiUrl}/submit-form`, payload);
 			clearInterval(interval);
 
-			console.log('Form submitted successfully:', data);
-			setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation, including your spam folder.' });
+			if (response.status === 200) {
+				console.log('Form submitted successfully:', data);
+				setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation, including your spam folder.' });
+			} else {
+				setAlert({ title: 'Registration Failed!', description: 'An error occurred. Please try again later.', variant: 'destructive' });
+			}
 		} catch (error) {
 			clearInterval(interval);
-			setAlert({ title: 'Registration Failed!', description: 'Please Enter a valid Email! & check your data.', variant: 'destructive' });
-			console.error('Error submitting form:', error);
+			if (axios.isAxiosError(error) && error.response) {
+				console.error('Error submitting form:', error.response.data);
+				setAlert({ title: 'Registration Failed!', description: error.response.data.message || 'Please enter valid data.', variant: 'destructive' });
+			} else {
+				setAlert({ title: 'Registration Failed!', description: 'Please check your network connection.', variant: 'destructive' });
+				console.error('Error submitting form:', error);
+			}
 		}
 	};
 
@@ -113,12 +123,12 @@ const Form: React.FC = () => {
 
 				<div className="mb-4">
 					<Label className="text-[var(--text-color)] font-bold text-lg">Branch</Label>
-					<Select onValueChange={(value: 'CSE' | 'ECE' | 'EEE' | 'AIML' | 'AIDS' | 'CSD' | 'ME') => setValue('branch', value)}>
+					<Select onValueChange={(value: 'CSE' | 'ECE' | 'EEE' | 'AIML' | 'AIDS' | 'CSD' | 'ME' | 'IT' | 'CIVIL') => setValue('branch', value)}>
 						<SelectTrigger className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}>
 							<SelectValue placeholder="Select Branch" />
 						</SelectTrigger>
 						<SelectContent className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-[var(--text-color)]`}>
-							{['CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME'].map((branch) => (
+							{['CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME', 'IT', 'CIVIL'].map((branch) => (
 								<SelectItem key={branch} value={branch} className={`text-sm ${isDarkMode ? 'text-stone-300 hover:bg-gray-700' : 'text-black hover:bg-gray-200'}`}>
 									{branch}
 								</SelectItem>
@@ -150,7 +160,11 @@ const Form: React.FC = () => {
 
 				<div className="mb-4">
 					<Label className="text-[var(--text-color)] font-bold text-lg">Email</Label>
-					<Input {...register('email')} placeholder="n@gga.com" className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`} />
+					<Input
+						{...register('email')}
+						placeholder="john.doe@gmail.com"
+						className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}
+					/>
 					{errors.email && <p className="mt-1 text-red-500 text-xs italic">{errors.email.message}</p>}
 				</div>
 

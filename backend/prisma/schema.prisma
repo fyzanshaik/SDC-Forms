@@ -29,6 +29,8 @@ enum Branch {
   AIDS
   CSD
   ME
+  IT
+  CIVIL
 }
 
 model Student {
