@@ -53,7 +53,7 @@ const Form: React.FC = () => {
 
 			const response = await axios.post(`${apiUrl}/submit-form`, payload);
 			clearInterval(interval);
-
+			console.log(response);
 			if (response.status === 200) {
 				console.log('Form submitted successfully:', data);
 				setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation, including your spam folder.' });

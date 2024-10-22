@@ -11,15 +11,14 @@ const studentSchema = zod_1.z.object({
     firstName: zod_1.z.string().min(1, 'First name is required'),
     lastName: zod_1.z.string().min(1, 'Last name is required'),
     year: zod_1.z.enum(['ONE', 'TWO', 'THREE', 'FOUR']),
-    branch: zod_1.z.enum(['CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME']),
+    branch: zod_1.z.enum(['CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME', 'IT', 'CIVIL']),
     section: zod_1.z.string().length(1, 'Section must be a single character'),
     phoneNumber: zod_1.z.string().length(10, 'Phone number must be exactly 10 digits').regex(/^\d+$/, 'Phone number must contain only digits'),
     email: zod_1.z.string().email('Invalid email address'),
 });
-let count = 0;
 const submitForm = async (req, res) => {
     const { studentData } = req.body;
-    console.log('hit: ', count++);
+    console.log('Form submission hit');
     const parsedStudentData = await studentSchema.safeParseAsync(studentData);
     if (!parsedStudentData.success) {
         return res.status(400).json({
@@ -28,6 +27,15 @@ const submitForm = async (req, res) => {
         });
     }
     try {
+        const existingStudent = await db_1.default.student.findUnique({
+            where: { email: parsedStudentData.data.email },
+        });
+        if (existingStudent) {
+            return res.status(409).json({
+                error: 'Registration failed',
+                details: 'Email already registered.',
+            });
+        }
         const newStudent = await db_1.default.student.create({
             data: parsedStudentData.data,
         });
@@ -38,6 +46,7 @@ const submitForm = async (req, res) => {
         });
     }
     catch (err) {
+        console.error('Error while submitting form:', err);
         return res.status(500).json({
             error: 'Database error',
             details: err instanceof Error ? err.message : 'Unknown error',
