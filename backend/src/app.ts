@@ -6,7 +6,7 @@ const app = express();
 
 app.use(
 	cors({
-		origin: 'http://localhost:5173',
+		origin: ['http://localhost:5173', 'https://sdc-forms.vercel.app', 'https://sdc-forms-git-main-fyzanshaiks-projects.vercel.app', 'https://sdc-forms-86wal909i-fyzanshaiks-projects.vercel.app'],
 	})
 );
 
