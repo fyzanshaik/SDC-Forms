@@ -63,7 +63,11 @@ const Form: React.FC = () => {
 	};
 
 	return (
-		<div className={`flex justify-center items-center min-h-screen ${isDarkMode ? 'dark' : 'light'} transition duration-300  dark:bg-stone-950 light:bg-white rounded-sm border-2 border-stone-200`}>
+		<div
+			className={`flex justify-center flex-col items-center min-h-screen ${
+				isDarkMode ? 'dark' : 'light'
+			} transition duration-300  dark:bg-stone-950 light:bg-white rounded-sm border-2 border-stone-200`}
+		>
 			{alert && (
 				<div className="absolute top-20 right-4">
 					<AlertMessage title={alert.title} description={alert.description} variant={alert.variant} />
@@ -154,7 +158,7 @@ const Form: React.FC = () => {
 					Submit
 				</Button>
 			</form>
-			<div className="absolute bottom-4  right-4">
+			<div className="mt-4 w-full flex justify-center">
 				<GitHubCard />
 			</div>
 		</div>
