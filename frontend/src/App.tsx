@@ -12,7 +12,7 @@ const App: React.FC = () => {
 
 	const checkServer = async () => {
 		try {
-			const response = await axios.get('https://sdc-forms-backend.onrender.com/'); // Replace with your endpoint
+			const response = await axios.get('https://sdc-forms-backend.onrender.com/');
 			if (response.data.message) {
 				setServerUp(true);
 			}
