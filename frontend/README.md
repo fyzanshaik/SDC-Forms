@@ -76,4 +76,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 For more updates and events, follow us on our social media channels! 
 
 Thank you for checking out our registration app! We hope to see you at the event! 🎊
-```
+
