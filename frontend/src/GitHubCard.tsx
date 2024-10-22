@@ -5,7 +5,7 @@ import githubLogo from '../public/git1.png'; // Adjust the path as necessary
 
 const GitHubCard: React.FC = () => {
 	const handleGitHubClick = () => {
-		window.location.href = 'https://github.com/fyzanshaik/SDC-Forms'; // Replace with your GitHub URL
+		window.location.href = import.meta.env.VITE_GITHUB_URL; // Replace with your GitHub URL
 	};
 
 	return (

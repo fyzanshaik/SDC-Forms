@@ -1,50 +1,79 @@
-# React + TypeScript + Vite
+# 🎉 Student Developers Club Registration App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to the **Student Developers Club** registration app! 🚀 This application is designed for our first event, allowing students to register seamlessly and manage their information effectively.
 
-Currently, two official plugins are available:
+## 📦 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **User Registration**: Easily register for the event by filling out a simple form. 📝
+- **Form Validation**: Ensures all entries are valid using real-time validation. ✔️
+- **Dark Mode**: A modern UI that supports both light and dark themes for a better user experience. 🌙
+- **GitHub Integration**: Quick access to the codebase and an option to report issues directly on GitHub. 🐙
+  
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend**: React, Vite, Tailwind CSS, Zod, React Hook Form
+- **Backend**: Express, Prisma, Nodemailer, Redis
+- **Database**: PostgreSQL
+- **Deployment**: Render for backend, Vercel for frontend
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🚀 Getting Started
 
-- Configure the top-level `parserOptions` property like this:
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/fyzanshaik/SDC-Forms.git
+   cd SDC-Forms
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+2. **Install Dependencies**:
+   For the frontend:
+   ```bash
+   cd frontend
+   npm install
+   ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+   For the backend:
+   ```bash
+   cd backend
+   npm install
+   ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+3. **Setup Environment Variables**:
+   Create a `.env` file in both the frontend and backend directories to store your environment variables. Ensure to prefix your variable names with `VITE_` for Vite to recognize them in the frontend. Example:
+   ```env
+   # Frontend
+   VITE_API_URL=http://localhost:8080/api
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+   # Backend
+   DATABASE_URL=postgres://user:password@localhost:5432/mydb
+   ```
+
+4. **Run the Application**:
+   Start the backend server:
+   ```bash
+   cd backend
+   npm run dev
+   ```
+
+   Then start the frontend development server:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+5. **Open your Browser**:
+   Navigate to `http://localhost:3000` to see the app in action! 🌟
+
+## 🤝 Contributing
+
+We welcome contributions! If you have suggestions for improvements or want to report bugs, feel free to create an issue or submit a pull request. 
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## 🐦 Connect with Us
+
+For more updates and events, follow us on our social media channels! 
+
+Thank you for checking out our registration app! We hope to see you at the event! 🎊
 ```

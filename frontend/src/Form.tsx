@@ -11,6 +11,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import SessionHeader from './SessionHeader';
 import AlertMessage from './AlertMesssage';
 import sdcImage from '../public/2.png';
+const apiUrl = import.meta.env.VITE_API_URL;
 import GitHubCard from './GitHubCard';
 const studentSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
@@ -26,7 +27,6 @@ type StudentFormData = z.infer<typeof studentSchema>;
 
 const Form: React.FC = () => {
 	const { theme } = useTheme();
-	const apiUrl = 'http://localhost:8080/api/submit-form';
 	const isDarkMode = theme === 'dark';
 	const [alert, setAlert] = useState<{ title: string; description: string; variant?: 'default' | 'destructive' } | null>(null);
 	const {
@@ -42,12 +42,12 @@ const Form: React.FC = () => {
 		console.log(data);
 		try {
 			const payload = { studentData: data };
-			await axios.post(`${apiUrl}`, payload);
+			await axios.post(`${apiUrl}/submit-form`, payload);
 
 			console.log('Form submitted successfully:', data);
-			setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation.' });
+			setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation & spam folder.' });
 		} catch (error) {
-			setAlert({ title: 'Registration Failed!', description: 'Please Enter a valid Email!.', variant: 'destructive' });
+			setAlert({ title: 'Registration Failed!', description: 'Please Enter a valid Email! & check your data.', variant: 'destructive' });
 			console.error('Error submitting form:', error);
 		}
 	};
