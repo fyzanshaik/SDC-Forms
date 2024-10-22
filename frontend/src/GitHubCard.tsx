@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import githubLogo from '../public/git1.png'; // Adjust the path as necessary
+import githubLogo from './git1.png'; // Adjust the path as necessary
 
 const GitHubCard: React.FC = () => {
 	const handleGitHubClick = () => {

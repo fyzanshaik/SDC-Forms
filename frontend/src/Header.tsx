@@ -1,8 +1,8 @@
 import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from './components/ui/button';
 import { useTheme } from '@/components/theme-provider';
-import githubLogoDark from '../public/git1.png';
-import githubLogoLight from '../public/git2.svg';
+import githubLogoDark from './git1.png';
+import githubLogoLight from './git2.svg';
 
 const Header = () => {
 	const { theme } = useTheme();

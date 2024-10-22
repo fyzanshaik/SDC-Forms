@@ -8,9 +8,10 @@ import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Label } from './components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './components/ui/select';
+import { Progress } from '@/components/ui/progress';
 import SessionHeader from './SessionHeader';
 import AlertMessage from './AlertMesssage';
-import sdcImage from '../public/2.png';
+import sdcImage from './2.png';
 const apiUrl = import.meta.env.VITE_API_URL;
 import GitHubCard from './GitHubCard';
 const studentSchema = z.object({
@@ -29,6 +30,7 @@ const Form: React.FC = () => {
 	const { theme } = useTheme();
 	const isDarkMode = theme === 'dark';
 	const [alert, setAlert] = useState<{ title: string; description: string; variant?: 'default' | 'destructive' } | null>(null);
+	const [progress, setProgress] = useState<number | null>(null);
 	const {
 		register,
 		handleSubmit,
@@ -39,14 +41,22 @@ const Form: React.FC = () => {
 	});
 
 	const onSubmit = async (data: StudentFormData) => {
+		setProgress(0);
 		console.log(data);
+		const payload = { studentData: data };
+		let interval;
 		try {
-			const payload = { studentData: data };
+			interval = setInterval(() => {
+				setProgress((prev) => (prev !== null && prev < 100 ? prev + 20 : 100));
+			}, 500);
+
 			await axios.post(`${apiUrl}/submit-form`, payload);
+			clearInterval(interval);
 
 			console.log('Form submitted successfully:', data);
-			setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation & spam folder.' });
+			setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation, including your spam folder.' });
 		} catch (error) {
+			clearInterval(interval);
 			setAlert({ title: 'Registration Failed!', description: 'Please Enter a valid Email! & check your data.', variant: 'destructive' });
 			console.error('Error submitting form:', error);
 		}
@@ -57,6 +67,12 @@ const Form: React.FC = () => {
 			{alert && (
 				<div className="absolute top-20 right-4">
 					<AlertMessage title={alert.title} description={alert.description} variant={alert.variant} />
+				</div>
+			)}
+
+			{progress !== null && progress < 100 && (
+				<div className="absolute top-20 right-4 w-[20%]">
+					<Progress value={progress} />
 				</div>
 			)}
 
