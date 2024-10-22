@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { submitForm } from './formController';
+import { healthCheck } from './healthController';
 const router = Router();
 
 const studentSchema = z.object({

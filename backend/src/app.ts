@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import userRouter from './route';
-
+import healthRoute from './healthRoute';
 const app = express();
 const PORT = process.env.PORT || 8080;
 app.use(
@@ -11,6 +11,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.get('/', healthRoute);
 
 app.use('/api', userRouter);
 

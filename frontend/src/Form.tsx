@@ -12,7 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import SessionHeader from './SessionHeader';
 import AlertMessage from './AlertMesssage';
 import sdcImage from './2.png';
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = 'https://sdc-forms-backend.onrender.com/api';
 import GitHubCard from './GitHubCard';
 const studentSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
@@ -39,7 +39,7 @@ const Form: React.FC = () => {
 	} = useForm<StudentFormData>({
 		resolver: zodResolver(studentSchema),
 	});
-
+	console.log(apiUrl);
 	const onSubmit = async (data: StudentFormData) => {
 		setProgress(0);
 		console.log(data);
