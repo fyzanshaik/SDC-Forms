@@ -1,0 +1,15 @@
+name: Server GET Request
+
+on:
+  schedule:
+    # Runs every 5 minutes
+    - cron: '*/6 * * * *'
+
+jobs:
+  hit-server:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send GET request to server
+      run: |
+        curl -X GET https://sdc-forms-backend.onrender.com
