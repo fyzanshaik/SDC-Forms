@@ -48,7 +48,7 @@ const Form: React.FC = () => {
 		try {
 			interval = setInterval(() => {
 				setProgress((prev) => (prev !== null && prev < 100 ? prev + 20 : 100));
-			}, 500);
+			}, 1500);
 
 			await axios.post(`${apiUrl}/submit-form`, payload);
 			clearInterval(interval);
