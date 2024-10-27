@@ -21,7 +21,7 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 'vite-ui-theme' }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = 'dark', storageKey = 'vite-ui-theme' }: ThemeProviderProps) {
 	const [theme, setTheme] = useState<Theme>(() => {
 		return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
 	});
@@ -38,7 +38,6 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
 			root.classList.add(theme);
 		}
 
-		// Set CSS variables for themes
 		if (theme === 'dark') {
 			root.style.setProperty('--bg-color', '#0000'); // stone-900
 			root.style.setProperty('--text-color', '#ffffff'); // Light text

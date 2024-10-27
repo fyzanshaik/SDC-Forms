@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+
 import userRouter from './route';
 import healthRoute from './healthRoute';
 const app = express();
@@ -11,7 +13,11 @@ app.use(
 );
 
 app.use(express.json());
-
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	max: 50,
+});
+app.use(limiter);
 app.get('/', healthRoute);
 
 app.use('/api', userRouter);

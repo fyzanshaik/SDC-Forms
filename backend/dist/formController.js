@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.submitForm = void 0;
 const zod_1 = require("zod");
-const mail_1 = __importDefault(require("./mail"));
+const queue_1 = __importDefault(require("./queue"));
 const db_1 = __importDefault(require("./db"));
 const studentSchema = zod_1.z.object({
     firstName: zod_1.z.string().min(1, 'First name is required'),
@@ -18,38 +18,44 @@ const studentSchema = zod_1.z.object({
 });
 const submitForm = async (req, res) => {
     const { studentData } = req.body;
-    console.log('Form submission hit');
-    const parsedStudentData = await studentSchema.safeParseAsync(studentData);
+    const parsedStudentData = studentSchema.safeParse(studentData);
     if (!parsedStudentData.success) {
         return res.status(400).json({
             error: 'Validation failed',
             details: parsedStudentData.error.errors,
         });
     }
+    const { email } = parsedStudentData.data;
     try {
-        const existingStudent = await db_1.default.student.findUnique({
-            where: { email: parsedStudentData.data.email },
-        });
-        if (existingStudent) {
-            return res.status(409).json({
-                error: 'Registration failed',
-                details: 'Email already registered.',
+        const result = await db_1.default.$transaction(async (prisma) => {
+            const existingStudent = await prisma.student.findUnique({
+                where: { email },
             });
-        }
-        const newStudent = await db_1.default.student.create({
-            data: parsedStudentData.data,
+            if (existingStudent) {
+                throw new Error('Email already registered.');
+            }
+            return await prisma.student.create({
+                data: parsedStudentData.data,
+            });
         });
-        await (0, mail_1.default)(newStudent.email);
-        return res.status(201).json({
+        await queue_1.default.add({ email });
+        return res.status(200).json({
             message: 'Data submitted successfully!',
-            student: newStudent,
+            student: result,
         });
     }
     catch (err) {
-        console.error('Error while submitting form:', err);
+        const error = err;
+        if (error.message === 'Email already registered.') {
+            return res.status(409).json({
+                error: 'Registration failed',
+                details: error.message,
+            });
+        }
+        console.error('Error while submitting form:', error);
         return res.status(500).json({
             error: 'Database error',
-            details: err instanceof Error ? err.message : 'Unknown error',
+            details: error.message || 'Unknown error',
         });
     }
 };

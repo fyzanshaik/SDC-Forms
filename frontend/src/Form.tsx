@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/theme-provider';
 import axios from 'axios';
 import { Button } from './components/ui/button';
@@ -12,8 +13,9 @@ import { Progress } from '@/components/ui/progress';
 import SessionHeader from './SessionHeader';
 import AlertMessage from './AlertMesssage';
 import sdcImage from './2.png';
-const apiUrl = 'https://sdc-forms-backend.onrender.com/api';
 import GitHubCard from './GitHubCard';
+import { prodApi } from './serverURL';
+
 const studentSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
 	lastName: z.string().min(1, 'Last name is required'),
@@ -31,6 +33,8 @@ const Form: React.FC = () => {
 	const isDarkMode = theme === 'dark';
 	const [alert, setAlert] = useState<{ title: string; description: string; variant?: 'default' | 'destructive' } | null>(null);
 	const [progress, setProgress] = useState<number | null>(null);
+	const navigate = useNavigate();
+
 	const {
 		register,
 		handleSubmit,
@@ -39,68 +43,89 @@ const Form: React.FC = () => {
 	} = useForm<StudentFormData>({
 		resolver: zodResolver(studentSchema),
 	});
-	console.log(apiUrl);
+
 	const onSubmit = async (data: StudentFormData) => {
 		setProgress(0);
-		console.log(data);
 		const payload = { studentData: data };
-		let interval;
+
+		const interval = setInterval(() => {
+			setProgress((prev) => (prev !== null && prev < 100 ? prev + 20 : 100));
+		}, 100);
 
 		try {
-			interval = setInterval(() => {
-				setProgress((prev) => (prev !== null && prev < 100 ? prev + 20 : 100));
-			}, 500);
-
-			const response = await axios.post(`${apiUrl}/submit-form`, payload);
+			const response = await axios.post(`${prodApi}api/submit-form`, payload);
 			clearInterval(interval);
-			console.log(response);
 			if (response.status === 200) {
-				console.log('Form submitted successfully:', data);
-				setAlert({ title: 'Registration Successful!', description: 'Please check your email for confirmation, including your spam folder.' });
+				setAlert({
+					title: 'Registration Successful!',
+					description: 'Please check your email for confirmation, including your spam folder.',
+				});
+				setTimeout(() => setAlert(null), 5000);
+				navigate('/success');
 			} else {
-				setAlert({ title: 'Registration Failed!', description: 'An error occurred. Please try again later.', variant: 'destructive' });
+				setAlert({
+					title: 'Registration Failed!',
+					description: 'An error occurred. Please try again later.',
+					variant: 'destructive',
+				});
+				setTimeout(() => setAlert(null), 5000);
 			}
 		} catch (error) {
 			clearInterval(interval);
 			if (axios.isAxiosError(error) && error.response) {
-				console.error('Error submitting form:', error.response.data);
-				setAlert({ title: 'Registration Failed!', description: error.response.data.message || 'Please enter valid data.', variant: 'destructive' });
+				setAlert({
+					title: 'Registration Failed!',
+					description: error.response.data.message || 'Please enter valid data.',
+					variant: 'destructive',
+				});
+				setTimeout(() => setAlert(null), 5000);
 			} else {
-				setAlert({ title: 'Registration Failed!', description: 'Please check your network connection.', variant: 'destructive' });
-				console.error('Error submitting form:', error);
+				setAlert({
+					title: 'Registration Failed!',
+					description: 'Please check your network connection.',
+					variant: 'destructive',
+				});
+				setTimeout(() => setAlert(null), 5000);
 			}
+		} finally {
+			setProgress(null);
 		}
 	};
 
 	return (
-		<div
-			className={`flex justify-center flex-col items-center min-h-screen ${
-				isDarkMode ? 'dark' : 'light'
-			} transition duration-300  dark:bg-stone-950 light:bg-white rounded-sm border-2 border-stone-200`}
-		>
+		<div className={`flex justify-center flex-col items-center min-h-screen ${isDarkMode ? 'dark' : 'light'} pt-7 transition duration-300  dark:bg-stone-950 light:bg-white `}>
 			{alert && (
-				<div className="absolute top-20 right-4">
+				<div className="absolute top-20 right-4 w-full max-w-xs sm:max-w-md md:max-w-lg z-10">
 					<AlertMessage title={alert.title} description={alert.description} variant={alert.variant} />
 				</div>
 			)}
 
 			{progress !== null && progress < 100 && (
-				<div className="absolute top-20 right-4 w-[20%]">
-					<Progress value={progress} />
+				<div className="absolute top-20 right-4 w-full max-w-xs sm:max-w-sm md:max-w-md z-10">
+					<Progress value={progress} className="h-2" />
 				</div>
 			)}
 
-			<form onSubmit={handleSubmit(onSubmit)} className={`form ${isDarkMode ? 'dark' : 'light'} bg-[var(--bg-color)] `}>
+			<form onSubmit={handleSubmit(onSubmit)} className={`form ${isDarkMode ? 'dark' : 'light'} bg-[var(--bg-color)]`}>
 				<SessionHeader logoSrc={sdcImage} title="Session Registration" />
+
 				<div className="mb-4">
 					<Label className="text-[var(--text-color)] font-bold text-lg">First Name</Label>
-					<Input {...register('firstName')} placeholder="Eg: Ravi" className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`} />
+					<Input
+						{...register('firstName')}
+						placeholder="Enter your first name"
+						className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}
+					/>
 					{errors.firstName && <p className="mt-1 text-red-500 text-xs italic">{errors.firstName.message}</p>}
 				</div>
 
 				<div className="mb-4">
 					<Label className="text-[var(--text-color)] font-bold text-lg">Last Name</Label>
-					<Input {...register('lastName')} placeholder="Eg: Kumar" className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`} />
+					<Input
+						{...register('lastName')}
+						placeholder="Enter your last name"
+						className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}
+					/>
 					{errors.lastName && <p className="mt-1 text-red-500 text-xs italic">{errors.lastName.message}</p>}
 				</div>
 
@@ -140,11 +165,7 @@ const Form: React.FC = () => {
 
 				<div className="mb-4">
 					<Label className="text-[var(--text-color)] font-bold text-lg">Section</Label>
-					<Input
-						{...register('section')}
-						placeholder="Eg: A | B | C ..."
-						className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}
-					/>
+					<Input {...register('section')} placeholder="A, B, C, etc." className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`} />
 					{errors.section && <p className="mt-1 text-red-500 text-xs italic">{errors.section.message}</p>}
 				</div>
 
@@ -152,7 +173,7 @@ const Form: React.FC = () => {
 					<Label className="text-[var(--text-color)] font-bold text-lg">Phone Number</Label>
 					<Input
 						{...register('phoneNumber')}
-						placeholder="Eg: 9811111111"
+						placeholder="10-digit phone number"
 						className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}
 					/>
 					{errors.phoneNumber && <p className="mt-1 text-red-500 text-xs italic">{errors.phoneNumber.message}</p>}
@@ -162,7 +183,7 @@ const Form: React.FC = () => {
 					<Label className="text-[var(--text-color)] font-bold text-lg">Email</Label>
 					<Input
 						{...register('email')}
-						placeholder="john.doe@gmail.com"
+						placeholder="example@example.com"
 						className={`text-sm text-[var(--text-color)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}
 					/>
 					{errors.email && <p className="mt-1 text-red-500 text-xs italic">{errors.email.message}</p>}

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import sendMail from './mail';
+import emailQueue from './queue';
 import prisma from './db';
 
 const studentSchema = z.object({
@@ -21,9 +21,8 @@ interface UserStudentFormBody {
 
 export const submitForm = async (req: Request, res: Response) => {
 	const { studentData } = req.body as UserStudentFormBody;
-	console.log('Form submission hit');
-	const parsedStudentData = await studentSchema.safeParseAsync(studentData);
 
+	const parsedStudentData = studentSchema.safeParse(studentData);
 	if (!parsedStudentData.success) {
 		return res.status(400).json({
 			error: 'Validation failed',
@@ -31,33 +30,43 @@ export const submitForm = async (req: Request, res: Response) => {
 		});
 	}
 
+	const { email } = parsedStudentData.data;
+
 	try {
-		const existingStudent = await prisma.student.findUnique({
-			where: { email: parsedStudentData.data.email },
-		});
-
-		if (existingStudent) {
-			return res.status(409).json({
-				error: 'Registration failed',
-				details: 'Email already registered.',
+		const result = await prisma.$transaction(async (prisma) => {
+			const existingStudent = await prisma.student.findUnique({
+				where: { email },
 			});
-		}
 
-		const newStudent = await prisma.student.create({
-			data: parsedStudentData.data,
+			if (existingStudent) {
+				throw new Error('Email already registered.');
+			}
+
+			return await prisma.student.create({
+				data: parsedStudentData.data,
+			});
 		});
 
-		await sendMail(newStudent.email);
+		await emailQueue.add({ email });
 
 		return res.status(200).json({
 			message: 'Data submitted successfully!',
-			student: newStudent,
+			student: result,
 		});
 	} catch (err) {
-		console.error('Error while submitting form:', err);
+		const error = err as Error;
+
+		if (error.message === 'Email already registered.') {
+			return res.status(409).json({
+				error: 'Registration failed',
+				details: error.message,
+			});
+		}
+
+		console.error('Error while submitting form:', error);
 		return res.status(500).json({
 			error: 'Database error',
-			details: err instanceof Error ? err.message : 'Unknown error',
+			details: error.message || 'Unknown error',
 		});
 	}
 };

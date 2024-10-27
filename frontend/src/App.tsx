@@ -3,6 +3,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Header from './Header';
 import Form from './Form';
 import Loader from './Loader';
+import SuccessPage from './SuccessPage'; // Create this component
+import { ToastProviderWrapper } from './ToastContext'; // Adjust the path
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import necessary components from react-router
+import { devApi, prodApi } from './serverURL';
 import axios from 'axios';
 import './styles.css';
 
@@ -12,7 +16,8 @@ const App: React.FC = () => {
 
 	const checkServer = async () => {
 		try {
-			const response = await axios.get('https://sdc-forms-backend.onrender.com/');
+			console.log('Prod api: ', prodApi, devApi);
+			const response = await axios.get(prodApi);
 			if (response.data.message) {
 				setServerUp(true);
 			}
@@ -32,11 +37,18 @@ const App: React.FC = () => {
 	}
 
 	return (
-		<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-			<div className="">
-				<Header />
-				{serverUp ? <Form /> : <p className="text-red-500">Server is down. Please wait.</p>}
-			</div>
+		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+			<ToastProviderWrapper>
+				<Router>
+					<div>
+						<Header />
+						<Routes>
+							<Route path="/" element={serverUp ? <Form /> : <p className="text-red-500">Server is down. Please wait.</p>} />
+							<Route path="/success" element={<SuccessPage />} />
+						</Routes>
+					</div>
+				</Router>
+			</ToastProviderWrapper>
 		</ThemeProvider>
 	);
 };

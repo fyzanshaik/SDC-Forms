@@ -33,8 +33,6 @@ const sendMail = async (recieverEmail: string) => {
         </div>
       `,
 	});
-
-	console.log(emailSuccess);
 };
 
 export default sendMail;
