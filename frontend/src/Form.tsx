@@ -14,7 +14,7 @@ import SessionHeader from './SessionHeader';
 import AlertMessage from './AlertMesssage';
 import sdcImage from './2.png';
 import GitHubCard from './GitHubCard';
-import { prodApi } from './serverURL';
+import { prodApi, devApi } from './serverURL';
 
 const studentSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
@@ -34,7 +34,7 @@ const Form: React.FC = () => {
 	const [alert, setAlert] = useState<{ title: string; description: string; variant?: 'default' | 'destructive' } | null>(null);
 	const [progress, setProgress] = useState<number | null>(null);
 	const navigate = useNavigate();
-
+	console.log(devApi, prodApi);
 	const {
 		register,
 		handleSubmit,

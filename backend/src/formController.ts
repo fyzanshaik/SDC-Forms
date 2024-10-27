@@ -20,51 +20,53 @@ interface UserStudentFormBody {
 }
 
 export const submitForm = async (req: Request, res: Response) => {
-	console.log('Hit the form endpoint');
 	const { studentData } = req.body as UserStudentFormBody;
+	console.log('Form submission hit');
 
-	// Validate the student data
-	const parsedStudentData = studentSchema.safeParse(studentData);
+	// Start performance logging
+	console.time('Form Submission Time');
+
+	const parsedStudentData = await studentSchema.safeParseAsync(studentData);
+
 	if (!parsedStudentData.success) {
+		console.timeEnd('Form Submission Time');
 		return res.status(400).json({
 			error: 'Validation failed',
 			details: parsedStudentData.error.errors,
 		});
 	}
 
-	const { email } = parsedStudentData.data;
-
 	try {
-		// Use a transaction to check and create the student
-		const result = await prisma.$transaction(async (prisma) => {
-			const existingStudent = await prisma.student.findUnique({
-				where: { email },
-			});
-
-			if (existingStudent) {
-				return res.status(409).json({
-					error: 'Registration failed',
-					details: 'Email already registered.',
-				});
-			}
-
-			// Create the new student
-			const newStudent = await prisma.student.create({
-				data: parsedStudentData.data,
-			});
-
-			// Queue the email for sending
-			await emailQueue.add({ email });
-
-			return newStudent; // Return the created student
+		console.time('Check Existing Student Time');
+		const existingStudent = await prisma.student.findUnique({
+			where: { email: parsedStudentData.data.email },
 		});
+		console.timeEnd('Check Existing Student Time');
 
+		if (existingStudent) {
+			console.timeEnd('Form Submission Time');
+			return res.status(409).json({
+				error: 'Registration failed',
+				details: 'Email already registered.',
+			});
+		}
+
+		console.time('Create New Student Time');
+		const newStudent = await prisma.student.create({
+			data: parsedStudentData.data,
+		});
+		console.timeEnd('Create New Student Time');
+
+		await emailQueue.add({ email: newStudent.email });
+
+		console.timeEnd('Form Submission Time');
 		return res.status(200).json({
 			message: 'Data submitted successfully!',
-			student: result,
+			student: newStudent,
 		});
 	} catch (err) {
 		console.error('Error while submitting form:', err);
+		console.timeEnd('Form Submission Time');
 		return res.status(500).json({
 			error: 'Database error',
 			details: err instanceof Error ? err.message : 'Unknown error',
