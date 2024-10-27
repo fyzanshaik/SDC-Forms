@@ -23,7 +23,6 @@ export const submitForm = async (req: Request, res: Response) => {
 	const { studentData } = req.body as UserStudentFormBody;
 	console.log('Form submission hit');
 
-	// Start performance logging
 	console.time('Form Submission Time');
 
 	const parsedStudentData = await studentSchema.safeParseAsync(studentData);
@@ -57,13 +56,16 @@ export const submitForm = async (req: Request, res: Response) => {
 		});
 		console.timeEnd('Create New Student Time');
 
-		// await emailQueue.add({ email: newStudent.email });
-
-		console.timeEnd('Form Submission Time');
-		return res.status(200).json({
+		res.status(200).json({
 			message: 'Data submitted successfully!',
 			student: newStudent,
 		});
+
+		console.time('Queue Email Time');
+		await emailQueue.add({ email: newStudent.email });
+		console.timeEnd('Queue Email Time');
+
+		console.timeEnd('Form Submission Time');
 	} catch (err) {
 		console.error('Error while submitting form:', err);
 		console.timeEnd('Form Submission Time');
