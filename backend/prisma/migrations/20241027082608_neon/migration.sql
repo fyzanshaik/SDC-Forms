@@ -2,7 +2,7 @@
 CREATE TYPE "Year" AS ENUM ('ONE', 'TWO', 'THREE', 'FOUR');
 
 -- CreateEnum
-CREATE TYPE "Branch" AS ENUM ('CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME');
+CREATE TYPE "Branch" AS ENUM ('CSE', 'ECE', 'EEE', 'AIML', 'AIDS', 'CSD', 'ME', 'IT', 'CIVIL');
 
 -- CreateTable
 CREATE TABLE "Student" (
