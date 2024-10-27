@@ -20,6 +20,7 @@ interface UserStudentFormBody {
 }
 
 export const submitForm = async (req: Request, res: Response) => {
+	console.log('Hit the form endpoint');
 	const { studentData } = req.body as UserStudentFormBody;
 
 	// Validate the student data

@@ -17,6 +17,7 @@ const studentSchema = zod_1.z.object({
     email: zod_1.z.string().email('Invalid email address'),
 });
 const submitForm = async (req, res) => {
+    console.log('Hit the form endpoint');
     const { studentData } = req.body;
     // Validate the student data
     const parsedStudentData = studentSchema.safeParse(studentData);

@@ -13,11 +13,7 @@ app.use(
 );
 
 app.use(express.json());
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	max: 50,
-});
-app.use(limiter);
+
 app.get('/', healthRoute);
 
 app.use('/api', userRouter);
