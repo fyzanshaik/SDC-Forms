@@ -55,7 +55,9 @@ const Form: React.FC = () => {
 		try {
 			const response = await axios.post(`${prodApi}api/submit-form`, payload);
 			clearInterval(interval);
+			console.log(response.status);
 			if (response.status === 200) {
+				console.log('magic');
 				setAlert({
 					title: 'Registration Successful!',
 					description: 'Please check your email for confirmation, including your spam folder.',
@@ -63,6 +65,7 @@ const Form: React.FC = () => {
 				setTimeout(() => setAlert(null), 5000);
 				navigate('/success');
 			} else {
+				console.log('didnt fail but status error? ');
 				setAlert({
 					title: 'Registration Failed!',
 					description: 'An error occurred. Please try again later.',
