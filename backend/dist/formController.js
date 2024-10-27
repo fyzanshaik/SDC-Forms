@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.submitForm = void 0;
 const zod_1 = require("zod");
+const queue_1 = __importDefault(require("./queue"));
 const db_1 = __importDefault(require("./db"));
 const studentSchema = zod_1.z.object({
     firstName: zod_1.z.string().min(1, 'First name is required'),
@@ -17,41 +18,32 @@ const studentSchema = zod_1.z.object({
 });
 const submitForm = async (req, res) => {
     const { studentData } = req.body;
-    console.log('Form submission hit');
-    // Start performance logging
-    console.time('Form Submission Time');
+    console.log('Form controller hit!');
     const parsedStudentData = await studentSchema.safeParseAsync(studentData);
     if (!parsedStudentData.success) {
-        console.timeEnd('Form Submission Time');
         return res.status(400).json({
             error: 'Validation failed',
             details: parsedStudentData.error.errors,
         });
     }
     try {
-        console.time('Check Existing Student Time');
         const existingStudent = await db_1.default.student.findUnique({
             where: { email: parsedStudentData.data.email },
         });
-        console.timeEnd('Check Existing Student Time');
         if (existingStudent) {
-            console.timeEnd('Form Submission Time');
             return res.status(409).json({
                 error: 'Registration failed',
                 details: 'Email already registered.',
             });
         }
-        console.time('Create New Student Time');
         const newStudent = await db_1.default.student.create({
             data: parsedStudentData.data,
         });
-        console.timeEnd('Create New Student Time');
-        // await emailQueue.add({ email: newStudent.email });
-        console.timeEnd('Form Submission Time');
-        return res.status(200).json({
+        res.status(200).json({
             message: 'Data submitted successfully!',
             student: newStudent,
         });
+        await queue_1.default.add({ email: newStudent.email });
     }
     catch (err) {
         console.error('Error while submitting form:', err);
