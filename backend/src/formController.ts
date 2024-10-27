@@ -22,6 +22,7 @@ interface UserStudentFormBody {
 export const submitForm = async (req: Request, res: Response) => {
 	const { studentData } = req.body as UserStudentFormBody;
 
+	// Validate the student data
 	const parsedStudentData = studentSchema.safeParse(studentData);
 	if (!parsedStudentData.success) {
 		return res.status(400).json({
@@ -33,40 +34,39 @@ export const submitForm = async (req: Request, res: Response) => {
 	const { email } = parsedStudentData.data;
 
 	try {
+		// Use a transaction to check and create the student
 		const result = await prisma.$transaction(async (prisma) => {
 			const existingStudent = await prisma.student.findUnique({
 				where: { email },
 			});
 
 			if (existingStudent) {
-				throw new Error('Email already registered.');
+				return res.status(409).json({
+					error: 'Registration failed',
+					details: 'Email already registered.',
+				});
 			}
 
-			return await prisma.student.create({
+			// Create the new student
+			const newStudent = await prisma.student.create({
 				data: parsedStudentData.data,
 			});
-		});
 
-		await emailQueue.add({ email });
+			// Queue the email for sending
+			await emailQueue.add({ email });
+
+			return newStudent; // Return the created student
+		});
 
 		return res.status(200).json({
 			message: 'Data submitted successfully!',
 			student: result,
 		});
 	} catch (err) {
-		const error = err as Error;
-
-		if (error.message === 'Email already registered.') {
-			return res.status(409).json({
-				error: 'Registration failed',
-				details: error.message,
-			});
-		}
-
-		console.error('Error while submitting form:', error);
+		console.error('Error while submitting form:', err);
 		return res.status(500).json({
 			error: 'Database error',
-			details: error.message || 'Unknown error',
+			details: err instanceof Error ? err.message : 'Unknown error',
 		});
 	}
 };
