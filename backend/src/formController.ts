@@ -52,7 +52,7 @@ export const submitForm = async (req: Request, res: Response) => {
 			student: newStudent,
 		});
 
-		await emailQueue.add({ email: newStudent.email });
+		emailQueue.add({ email: newStudent.email });
 	} catch (err) {
 		console.error('Error while submitting form:', err);
 		console.timeEnd('Form Submission Time');

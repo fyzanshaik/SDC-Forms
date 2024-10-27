@@ -43,7 +43,7 @@ const submitForm = async (req, res) => {
             message: 'Data submitted successfully!',
             student: newStudent,
         });
-        await queue_1.default.add({ email: newStudent.email });
+        queue_1.default.add({ email: newStudent.email });
     }
     catch (err) {
         console.error('Error while submitting form:', err);
