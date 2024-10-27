@@ -57,7 +57,7 @@ export const submitForm = async (req: Request, res: Response) => {
 		});
 		console.timeEnd('Create New Student Time');
 
-		await emailQueue.add({ email: newStudent.email });
+		// await emailQueue.add({ email: newStudent.email });
 
 		console.timeEnd('Form Submission Time');
 		return res.status(200).json({
