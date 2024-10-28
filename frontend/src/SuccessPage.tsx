@@ -47,7 +47,7 @@ const SuccessPage: React.FC = () => {
 	const eventDetails = {
 		name: 'Git & GitHub Workshop',
 		venue: 'SAC Room',
-		time: '1 PM',
+		time: '1:30 PM',
 	};
 
 	const handleBackToHome = () => {
