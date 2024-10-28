@@ -6,7 +6,7 @@ import Loader from './Loader';
 import SuccessPage from './SuccessPage'; // Create this component
 import { ToastProviderWrapper } from './ToastContext'; // Adjust the path
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import necessary components from react-router
-import { devApi, prodApi } from './serverURL';
+import { prodApi } from './serverURL';
 import axios from 'axios';
 import './styles.css';
 
@@ -16,7 +16,6 @@ const App: React.FC = () => {
 
 	const checkServer = async () => {
 		try {
-			console.log('Prod api: ', prodApi, devApi);
 			const response = await axios.get(prodApi);
 			if (response.data.message) {
 				setServerUp(true);

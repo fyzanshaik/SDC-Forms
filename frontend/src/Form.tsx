@@ -14,7 +14,7 @@ import SessionHeader from './SessionHeader';
 import AlertMessage from './AlertMesssage';
 import sdcImage from './2.png';
 import GitHubCard from './GitHubCard';
-import { prodApi, devApi } from './serverURL';
+import { prodApi } from './serverURL';
 
 const studentSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
@@ -33,8 +33,9 @@ const Form: React.FC = () => {
 	const isDarkMode = theme === 'dark';
 	const [alert, setAlert] = useState<{ title: string; description: string; variant?: 'default' | 'destructive' } | null>(null);
 	const [progress, setProgress] = useState<number | null>(null);
+	const [loading, setLoading] = useState(false); // New loading state
+
 	const navigate = useNavigate();
-	console.log(devApi, prodApi);
 	const {
 		register,
 		handleSubmit,
@@ -46,6 +47,7 @@ const Form: React.FC = () => {
 
 	const onSubmit = async (data: StudentFormData) => {
 		setProgress(0);
+		setLoading(true);
 		const payload = { studentData: data };
 
 		const interval = setInterval(() => {
@@ -55,9 +57,7 @@ const Form: React.FC = () => {
 		try {
 			const response = await axios.post(`${prodApi}api/submit-form`, payload);
 			clearInterval(interval);
-			console.log(response.status);
 			if (response.status === 200) {
-				console.log('magic');
 				setAlert({
 					title: 'Registration Successful!',
 					description: 'Please check your email for confirmation, including your spam folder.',
@@ -65,20 +65,20 @@ const Form: React.FC = () => {
 				setTimeout(() => setAlert(null), 5000);
 				navigate('/success');
 			} else {
-				console.log('didnt fail but status error? ');
 				setAlert({
 					title: 'Registration Failed!',
 					description: 'An error occurred. Please try again later.',
 					variant: 'destructive',
 				});
 				setTimeout(() => setAlert(null), 5000);
+				setLoading(false);
 			}
 		} catch (error) {
 			clearInterval(interval);
 			if (axios.isAxiosError(error) && error.response) {
 				setAlert({
 					title: 'Registration Failed!',
-					description: error.response.data.message || 'Please enter valid data.',
+					description: error.response.data.message || 'The email is already registered.',
 					variant: 'destructive',
 				});
 				setTimeout(() => setAlert(null), 5000);
@@ -89,9 +89,11 @@ const Form: React.FC = () => {
 					variant: 'destructive',
 				});
 				setTimeout(() => setAlert(null), 5000);
+				setLoading(false);
 			}
 		} finally {
 			setProgress(null);
+			setLoading(false);
 		}
 	};
 
@@ -193,10 +195,17 @@ const Form: React.FC = () => {
 				</div>
 
 				<Button type="submit" className="button w-full mt-4">
-					Submit
+					{loading ? (
+						<div className="flex items-center justify-center">
+							<div className="loader mr-2"></div>
+							<span>Loading...</span>
+						</div>
+					) : (
+						'Submit'
+					)}
 				</Button>
 			</form>
-			<div className="mt-4 w-full flex justify-center">
+			<div className=" mb-4 w-50  justify-center">
 				<GitHubCard />
 			</div>
 		</div>

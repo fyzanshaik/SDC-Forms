@@ -55,8 +55,12 @@ const SuccessPage: React.FC = () => {
 	};
 
 	return (
-		<div className={`relative flex justify-center flex-col items-center min-h-screen pt-7 transition duration-300 ${isDarkMode ? 'dark:text-white' : 'text-gray-800'}`}>
-			<div className="stars">
+		<div
+			className={`relative flex no-scrollbar overflow-hidden overflow-y-hidden justify-center flex-col items-center min-h-screen pt-7 transition duration-300 ${
+				isDarkMode ? 'dark:text-white' : 'text-gray-800'
+			}`}
+		>
+			<div className="stars no-scrollbar ">
 				{Array.from({ length: starsCount }).map((_, index) => (
 					<div
 						key={index}
@@ -79,7 +83,7 @@ const SuccessPage: React.FC = () => {
 					style={{
 						left: `${Math.random() * 100}vw`,
 						animationDuration: `${Math.random() * 1 + 1}s`,
-						animationDelay: `${Math.random() * 2}s`,
+						animationDelay: `${Math.random() * 3}s`,
 						transform: `translate(${Math.random() * 50 - 25}vw, ${Math.random() * 50}vh)`,
 					}}
 				/>
@@ -88,7 +92,7 @@ const SuccessPage: React.FC = () => {
 			<div className="relative z-10 flex flex-col items-center justify-center text-center space-y-4">
 				<h1 className="text-3xl font-bold">Registration Successful!</h1>
 				<p className="text-lg">
-					Thank you for registering! For future updates, join our WhatsApp group & we send you an email check your <strong>SPAM FOLDER</strong> :
+					Thank you for registering! For future updates, join our WhatsApp group & check your <strong>SPAM folder</strong> for an email :
 				</p>
 
 				<div className="flex flex-col items-start space-y-2 mb-4">
