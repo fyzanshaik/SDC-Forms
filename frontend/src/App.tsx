@@ -42,7 +42,7 @@ const App: React.FC = () => {
 					<div>
 						<Header />
 						<Routes>
-							<Route path="/" element={serverUp ? <Form /> : <p className="text-red-500">Server is down. Please wait.</p>} />
+							<Route path="/" element={serverUp ? <Form /> : <p className="text-red-500">Server is down. Please wait & reload the page again.</p>} />
 							<Route path="/success" element={<SuccessPage />} />
 						</Routes>
 					</div>
