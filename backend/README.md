@@ -1,6 +1,6 @@
 ### Backend README
 
-```markdown
+
 # ⚙️ Backend of Student Developers Club Registration App
 
 This is the backend part of the **Student Developers Club Registration App**. Built using Express and Prisma, it handles the business logic and database interactions for the application.

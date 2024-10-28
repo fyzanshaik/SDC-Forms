@@ -1,6 +1,6 @@
 ### Frontend README
 
-```markdown
+
 # 🎨 Frontend of Student Developers Club Registration App
 
 This is the frontend part of the **Student Developers Club Registration App**. Built using React and Vite, it provides an interactive interface for students to register for events easily.
