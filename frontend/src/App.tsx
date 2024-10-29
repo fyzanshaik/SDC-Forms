@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from '@/components/theme-provider';
 import Header from './Header';
-import Form from './Form';
+// import Form from './Form';
 import Loader from './Loader';
 import ClosedPage from './ClosedPage';
 import SuccessPage from './SuccessPage'; // Create this component
@@ -17,6 +17,7 @@ const App: React.FC = () => {
 
 	const checkServer = async () => {
 		try {
+			console.log(serverUp);
 			const response = await axios.get(prodApi);
 			if (response.data.message) {
 				setServerUp(true);
@@ -30,7 +31,7 @@ const App: React.FC = () => {
 
 	useEffect(() => {
 		checkServer();
-	}, []);
+	});
 
 	if (loading) {
 		return <Loader />;
