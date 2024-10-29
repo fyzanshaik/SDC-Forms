@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.submitForm = void 0;
 const zod_1 = require("zod");
-const queue_1 = __importDefault(require("./queue"));
 const db_1 = __importDefault(require("./db"));
 const studentSchema = zod_1.z.object({
     firstName: zod_1.z.string().min(1, 'First name is required'),
@@ -43,7 +42,7 @@ const submitForm = async (req, res) => {
             message: 'Data submitted successfully!',
             student: newStudent,
         });
-        queue_1.default.add({ email: newStudent.email });
+        // emailQueue.add({ email: newStudent.email });
     }
     catch (err) {
         console.error('Error while submitting form:', err);

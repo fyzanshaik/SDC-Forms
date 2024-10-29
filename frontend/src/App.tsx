@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import Header from './Header';
 import Form from './Form';
 import Loader from './Loader';
+import ClosedPage from './ClosedPage';
 import SuccessPage from './SuccessPage'; // Create this component
 import { ToastProviderWrapper } from './ToastContext'; // Adjust the path
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import necessary components from react-router
@@ -42,7 +43,8 @@ const App: React.FC = () => {
 					<div>
 						<Header />
 						<Routes>
-							<Route path="/" element={serverUp ? <Form /> : <p className="text-red-500">Server is down. Please wait & reload the page again.</p>} />
+							{/* <Route path="/" element={serverUp ? <Form /> : <p className="text-red-500">Server is down. Please wait & reload the page again.</p>} /> */}
+							<Route path="/" element={<ClosedPage />}></Route>
 							<Route path="/success" element={<SuccessPage />} />
 						</Routes>
 					</div>
